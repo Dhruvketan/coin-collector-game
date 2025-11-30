@@ -69,9 +69,9 @@ Then open `http://localhost:8080` in your browser.
 
 ### Alternative
 Just run the below command
-'''bash
+```bash
 .\start_game.bat
-'''
+```
 
 ### Step 3: Play
 
