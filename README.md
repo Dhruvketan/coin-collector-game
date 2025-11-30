@@ -67,6 +67,10 @@ python -m http.server 8080
 
 Then open `http://localhost:8080` in your browser.
 
+### Alternative
+'''bash
+.\start_game.bat
+
 ### Step 3: Play
 
 1. Enter your player name in each client window
