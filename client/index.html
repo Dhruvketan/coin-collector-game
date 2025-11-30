@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coin Collector - Multiplayer Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <!-- Name Input Screen -->
+        <div id="name-screen" class="screen">
+            <h1>Coin Collector</h1>
+            <p>Enter your player name:</p>
+            <input type="text" id="player-name-input" maxlength="20" placeholder="Enter name...">
+            <button id="connect-btn">Connect</button>
+            <p id="name-error" class="error"></p>
+        </div>
+
+        <!-- Lobby Screen -->
+        <div id="lobby-screen" class="screen hidden">
+            <h1>Waiting in Lobby</h1>
+            <p id="lobby-status">Waiting for another player...</p>
+            <div id="lobby-players"></div>
+            <div id="auto-start-timer" class="hidden">
+                <p>Game will start in <span id="timer-countdown">15</span> seconds</p>
+                <button id="start-now-btn">Start Now</button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen hidden">
+            <div id="game-ui">
+                <div id="scoreboard">
+                    <h3>Scoreboard</h3>
+                    <div id="scores"></div>
+                </div>
+                <div id="timer-display">
+                    <p>Time: <span id="time-remaining">3:00</span></p>
+                </div>
+            </div>
+            <canvas id="game-canvas"></canvas>
+            <div id="controls">
+                <p>Use arrow keys to move</p>
+            </div>
+        </div>
+
+        <!-- Game End Screen -->
+        <div id="end-screen" class="screen hidden">
+            <h1 id="end-title">Game Over</h1>
+            <div id="final-scores"></div>
+            <button id="play-again-btn">Play Again</button>
+        </div>
+    </div>
+
+    <script src="network.js"></script>
+    <script src="interpolation.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
+

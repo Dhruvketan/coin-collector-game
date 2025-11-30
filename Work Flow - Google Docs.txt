@@ -1,0 +1,132 @@
+​PS understanding and Scope​
+​Need to develop an online multiplayer game, in which players collect coins​
+
+​Language used:​
+​●​ ​Backend:​​Python + WebSockets (for server end)​
+​●​ ​Frontend:​​HTML + CSS + Javascript canvas (for client end)​
+
+​Game Type:​​2D​
+
+​Authoritative Server:​
+​Server decides everything, clients only sends requests and server validates those requests.​
+​It handles:​
+​●​ ​Client requests: Checking players touched coins or not, movement requests​
+​●​ ​Player positions​
+​●​ ​Coins spawning​
+​●​ ​Players scores​
+
+​Game Requirements Checklist:​
+●​ ​Multi-player game​
+​●​ Client-Server connection​
+​●​ Shape-based movement of players​
+​●​ Coin Spawning​
+​●​ Disappearing of coins when touched​
+​●​ Server Req:​
+​○​ ​Tracking player positions​
+​○​ ​Tracking player movements​
+○​ ​​Tracking coin positions​
+​○​ ​Tracking player scores​
+​○​ ​Collision resolve​
+​○​ ​Authoritative nature​
+​​●​ 200 ms latency handling​
+​​●​ Smoothness in movement of players through interpolation (latency may cause visual stutter)​
+
+​Files:​
+​●​ ​Server​
+​○​ ​server.py​
+​To handle clients login, messages from clients, and send updates/messages to clients​
+​○​ ​game_state.py​
+​To handle game logic, like coin spawning, number of coins, coins positions, updating​
+​player positions, player points, collision resolve, coin disappearance as soon as it is​
+​collected​
+​○​ ​config.py​
+​To store game configurations, like max number of coins at a time on the game screen, time​
+​after which new coin gets spawned, speed of players, tick rate, latency, coin radius, type of​
+​player shapes, player shape dimension, map size, coin collection radius (radius within​
+​which if a player is from coin then he collects the coin)​​○​ ​utils.py​
+​Contains helper function distance(p1, p2) (to calculate distance between points), random​
+​position() (to generate random coordinates where coin would spawn)​
+​​●​ ​Client​
+​○​ ​index.html​
+​Canvas + JS inclusion​
+​○​ ​network.js​
+​WebSocket client, send/receive from/to server, latency sim​
+​○​ ​interpolation.js​
+​For smooth rendering of positions as latency is high (200 ms)​
+​○​ ​game.js​
+​Drawing, input handling, animation loop for the game​
+​●​ ​README.md​
+​For instructions and explanation of the game​
+
+​Game Flow:​
+​The game window opens. As the player connects, the game asks him to choose a player name.​
+​Then he is sent to the lobby, where he waits for the other player. When the other player connects, a​
+​auto-start timer, say of 15 secs, runs after which game would start or any player can interrupt it by​
+​clicking a button which says “start now”. After this, a game screen will be displayed, where each​
+​player can see his and other players names and points. The coins start spawning on the map and​
+​players give input for where to move through their keyboard arrow keys.​
+​When the Game ends, display a message saying which player one (like, “XYZ wins”) on the screen​
+​●​ ​From Client end​
+​Opens index.html​
+​JS connects to Websocket​
+​Waiting till game starts​
+​Key press inputs read by client, which it sends to server​
+​Receive game state messages from server and update player positions, coins displayed on​
+​screen, player points​
+​Interpolating player positions​
+​Drawing coins and player shapes on canvas​
+​●​ ​From Server end​
+​Wait for WebSocket connections​
+​As the client connects, assign the player id, and random position​
+​Store client data, i.e, player name, player id, its coordinates, its points and its web socket (say,​
+​8000)​
+​Store coins data, i.e, the coordinates of each uncollected coin, and remove particular coin’s​
+​coordinates as soon as coin is collected, add coin’s coordinates when it gets spawned​
+​On each tick:​
+​○​ ​Update player positions​
+​○​ ​Check for collisions with coin (for collision resolve, use simple logic: if 2 players are​
+​eligible to score a coin, give it to the player which is closer to coin)​
+​○​ ​Update player scores​
+​○​ ​Spawning of new coin​
+​○​ ​Sending state messages to all clients​
+​Message Formats:​
+​●​ ​Server → Client​
+​{ "type": "state",​
+​"players": {​
+​"Player1_name": { “id”: int, "x": float, "y": float, "score": int, “shape”: int, ws},​
+​"Player2_name": { “id”: int, "x": float, "y": float, "score": int, “shape”: int, ws}​
+​},​
+​"coins": [​
+​{ "id": int, "x": float, "y": float},​
+​{ "id": int, "x": float, "y": float},​
+​….​
+​]​
+​}, Here shape has int type which corresponds to shape_id stored in​​config.py​
+​●​ ​Client → Server​
+​{“type”: , “name”: }, type can be “connected” or “disconnected”, name is user input for​
+​player name​
+​{“type”: , “dir”:}, here type is input and dir is right, left, up or down​
+​
+Configuration data:​
+​Tick rate: 20 Hz​
+​Max number of coins at a time on game screen: 2​
+​Time after which new coin gets spawned: every 10 seconds​
+​Speed of players: 1 unit per input​
+​Latency rate: 200 ms, i.e every send and receive on server and client end is delayed by 200 ms​
+​Coin radius = 2 units​
+​Type of player shapes: A dictionary with circle marked as 0 and square marked as 1​
+​Player shape dimension: 2 units​
+​Map size: 600 units x 800 units​
+​Coin collection radius (radius within which if a player is from coin then he collects the coin): 1 unit​
+
+​Interpolation Plan:​
+​Smooth animated change of coordinates of players not a sudden abrupt change​
+
+​Assumptions​
+​Clients connect to the server using local hosts only.​
+​Game length is 3 minutes​
+​Game pauses as if any one of or both players disconnects​
+​Coin is circular in shape​
+​All distances are measured center to center​
+
+
